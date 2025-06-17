@@ -54,20 +54,38 @@ This work utilizes the **DENTEX (Dental Enumeration and Diagnosis Benchmark for 
 To run inference on a new image using the trained model, use the following example script:
 
 ```python
+!pip install ultralytics
 from ultralytics import YOLO
 
 # Load the custom-trained YOLO12n model
-model = YOLO('path/to/your/trained_weights.pt')
+model = YOLO("yolo12n.pt")
 
-# Perform inference on a panoramic X-ray image
-results = model('path/to/dental_xray.jpg')
+# Train
+results = model.train(
+    data="/content/dentex_yolo12n/data.yaml",
+    epochs=80,
+    imgsz=640,
+    batch=16,
+    name='dentex_train'
+    )
 
 # The results object contains detections, masks, etc.
 # To visualize the results with bounding boxes:
-results[0].show()
+results = model.predict(
+    source="/content/dentex_yolo12n/images/val/train_655.png",
+    conf=0.25,
+    iou=0.7,
+    save=True,
+    save_crop=True,
+    save_txt=True
+)
 
-# To save the results:
-results[0].save(filename='result.jpg')
+import matplotlib.pyplot as plt
+
+plt.imshow(results[0].plot())
+plt.axis('off')
+plt.show()
+
 ```
 
 ### Citations and License
@@ -151,20 +169,38 @@ Este trabalho utiliza o dataset **DENTEX (Dental Enumeration and Diagnosis Bench
 Para executar uma inferência em uma nova imagem utilizando o modelo treinado, use o seguinte script como exemplo:
 
 ```python
+!pip install ultralytics
 from ultralytics import YOLO
 
 # Carrega o modelo YOLO12n treinado
-model = YOLO('caminho/para/seus/pesos.pt')
+model = YOLO("yolo12n.pt")
 
-# Realiza a inferência em uma imagem de raio-X panorâmico
-results = model('caminho/para/raiox_dental.jpg')
+# Realiza o treino do modelo
+results = model.train(
+    data="/content/dentex_yolo12n/data.yaml",
+    epochs=80,
+    imgsz=640,
+    batch=16,
+    name='dentex_train'
+    )
 
 # O objeto 'results' contém as detecções, máscaras, etc.
 # Para visualizar os resultados com as caixas delimitadoras (bounding boxes):
-results[0].show()
+results = model.predict(
+    source="/content/dentex_yolo12n/images/val/train_655.png",
+    conf=0.25,
+    iou=0.7,
+    save=True,
+    save_crop=True,
+    save_txt=True
+)
 
-# Para salvar os resultados:
-results[0].save(filename='resultado.jpg')
+import matplotlib.pyplot as plt
+
+plt.imshow(results[0].plot())
+plt.axis('off')
+plt.show()
+
 ```
 
 ### Citações e Licença
